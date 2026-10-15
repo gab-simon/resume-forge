@@ -66,6 +66,10 @@ class Settings(BaseSettings):
     smtp_starttls: bool = True
     smtp_timeout_seconds: PositiveFloat = 10.0
 
+    # OpenRouter chat models (app/providers/chat_provider.py). Optional, so the
+    # CLI and the API run without it; get_chat raises while it is not set.
+    openrouter_api_key: SecretStr | None = None
+
     # Resume sources and outputs
     resume_data_dir: Path = ROOT_DIR / 'data'
     resume_templates_dir: Path = ROOT_DIR / 'templates'

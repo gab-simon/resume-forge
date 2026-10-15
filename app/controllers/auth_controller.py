@@ -6,7 +6,7 @@ from fastapi import APIRouter, HTTPException, Path, Request, Response, status
 from fastapi.responses import JSONResponse
 
 from app.infra.context import RequestContext, UserContext
-from app.infra.email import EmailDeliveryError, get_email_sender
+from app.providers.email_provider import EmailDeliveryError, get_email_sender
 from app.resources.auth_resource import (
     AuthenticationChallengeRequestResource,
     AuthenticationChallengeResource,

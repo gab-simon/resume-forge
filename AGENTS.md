@@ -19,7 +19,11 @@ implemented.
 - Use async APIs for I/O. Blocking work (files, subprocesses) runs in worker
   threads: `asyncio.to_thread` or `app.infra.process.run_command`.
 - Use Loguru for application logs; terminal printing belongs to CLI output.
-- `ruff` and `ty` are pinned with `==`. Upgrade them together with `uv lock`.
+- `ruff` and `ty` are pinned with `==` in `pyproject.toml`, and
+  `.pre-commit-config.yaml` uses the same versions in its `rev` fields. When
+  upgrading one of them, change both files and run `uv lock`.
+- Run `uv run pre-commit install` once per clone. The `ty` hook checks the
+  whole project, `alembic/` included.
 - Do not use em dashes (Unicode U+2014). The en dash is allowed only as the
   date-range separator of the resume.
 
@@ -37,8 +41,9 @@ CLI command -> Service
 | `app/services/` | Business rules: validation, rendering, ATS check |
 | `app/repositories/` | Persistence: `data/` files today, PostgreSQL later |
 | `app/models/` | `resume.py` (Pydantic schema of `cv.yaml`), table models later |
+| `app/providers/` | Clients of external services: SMTP email, OpenRouter chat models |
 | `app/cli_commands/` | Thin Typer adapters, registered in `app/infra/cli/command.py` |
-| `app/infra/` | Settings, context, auth helpers, email, logging, database, processes, API composition |
+| `app/infra/` | Settings, context, auth helpers, logging, database, processes, API composition |
 | `templates/` | Jinja2 LaTeX templates and the plain-text template |
 
 - Controllers call services, never repositories, and map service exceptions to
@@ -59,8 +64,20 @@ CLI command -> Service
   `<TAG>-<function name>`; the front generates function names from it, so
   renaming a route function or a tag breaks the front. After changing routes,
   run `mani run openapi` from the workspace.
+- Providers wrap one external service each, in `app/providers/<name>_provider.py`.
+  They build the third-party client from settings, hold no business rules and
+  do not access the database. Services call providers; repositories do not.
+  The one exception is the email sender: `auth_controller` builds it with
+  `get_email_sender` and passes it to `auth_service.request_login_code`, so
+  tests pass a fake sender. Credentials are optional `SecretStr` settings, so
+  the CLI and the tests run without them; the provider raises when a missing
+  credential is needed (`get_chat` raises `ChatUnavailableError`).
 - Settings are typed in `app/infra/settings.py`; update `.env.example` and the
   README table when adding one.
+- Production may run several Uvicorn workers. Workers share no memory, and
+  the `lifespan` runs once per worker. Do not keep state that must be global,
+  such as caches, counters or rate limits, in module variables. Each worker
+  has its own pool of `DB_POOL_SIZE + DB_MAX_OVERFLOW` connections.
 
 ## Authentication and isolation
 
@@ -127,6 +144,9 @@ inherit `SQLBaseModel` (schema `resume_forge`), have a primary key and
 reviewed migration in `alembic/versions/`. `get_db_session()` owns
 commit/rollback; never commit in services or repositories.
 
+`diagrams/database.mmd` is the ER diagram of every table. Update it in the
+same change as a table model and its migration.
+
 ## Commits
 
 Commit or push only when the user asks. Work on a branch, never on `main` or
@@ -167,7 +187,7 @@ docs: describe the restricted database role
 
 Unit tests cover only `app/services/`, in `tests/unit/services/`, built with
 `mock_context()`, `make_user()` and `make_resume()` from
-`tests/unit/mocks/context.py`. Replace repositories with `AsyncMock`.
+`tests/unit/mocks/context.py`. Replace repositories and providers with mocks.
 Replace `run_command` with a mock; tests must not need TeX Live, pdftotext, a
 database or `.env`.
 
