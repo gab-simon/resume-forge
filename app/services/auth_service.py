@@ -14,7 +14,6 @@ from datetime import datetime, timedelta
 
 from app.infra.auth import require_user
 from app.infra.context import IContext
-from app.infra.email import EmailMessage, EmailSender
 from app.models.auth_challenge import AuthChallengeCreate, AuthChallengeUpdate
 from app.models.auth_refresh_token import (
     AuthRefreshTokenCreate,
@@ -22,6 +21,7 @@ from app.models.auth_refresh_token import (
 )
 from app.models.auth_session import AuthSession, AuthSessionCreate, AuthSessionUpdate
 from app.models.user import UI_LANGUAGES, UiLanguage, User, UserCreate
+from app.providers.email_provider import EmailMessage, EmailSender
 from app.repositories import (
     auth_challenge_repository,
     auth_refresh_token_repository,

@@ -1,4 +1,4 @@
-"""Email delivery."""
+"""Email delivery through SMTP, or to the log in development."""
 
 import asyncio
 import smtplib

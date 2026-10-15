@@ -27,6 +27,7 @@ sudo apt install texlive-latex-base texlive-latex-recommended \
 
 uv sync --locked
 cp .env.example .env
+uv run pre-commit install
 ```
 
 Pelo workspace, `mani run setup --all` faz o mesmo nos dois repositórios.
@@ -114,12 +115,18 @@ O front gera o client a partir do OpenAPI. `uv run cv openapi export -o
 | `CORS_ALLOWED_ORIGINS` | Origens do front, separadas por vírgula: `http://localhost:5173` |
 | `LOG_LEVEL` | `TRACE`, `DEBUG`, `INFO`, `SUCCESS`, `WARNING`, `ERROR` ou `CRITICAL` |
 | `DB_URL`, `DB_MIGRATION_URL` | PostgreSQL, sem o esquema da URI: papel da aplicação e dono das tabelas |
+| `DB_POOL_SIZE`, `DB_MAX_OVERFLOW` | Conexões fixas e extras do pool, por worker do Uvicorn. Padrão: 5 e 10 |
 | `AUTH_OTP_SECRET` | Segredo de pelo menos 32 caracteres para o digest dos códigos. Sem ele, o login responde 503 |
 | `AUTH_OTP_*`, `AUTH_ACCESS_TOKEN_TTL_MINUTES`, `AUTH_REFRESH_TOKEN_IDLE_TTL_DAYS`, `AUTH_SESSION_ABSOLUTE_TTL_DAYS` | Validade do código (10 min), tentativas (5), limites por e-mail e IP, validade dos tokens |
 | `APP_ENV` | `development` (padrão) ou `production`. Em `development` sem `SMTP_HOST`, o código de login é sempre `123456` |
 | `EMAIL_FROM`, `SMTP_*` | Envio do código por e-mail. `SMTP_HOST` vazio só é aceito em `development` |
 | `RESUME_DATA_DIR`, `RESUME_TEMPLATES_DIR`, `RESUME_OUTPUT_DIR` | Diretórios de dados, modelos e saída. Padrão: `data/`, `templates/`, `build/` |
 | `LATEX_COMMAND`, `PDFTOTEXT_COMMAND` | Executáveis externos. Padrão: `pdflatex`, `pdftotext` |
+| `OPENROUTER_API_KEY` | Chave dos modelos de chat em `app/providers/chat_provider.py`. Opcional: sem ela, `get_chat` levanta `ChatUnavailableError` |
+
+Cada worker do Uvicorn tem o próprio pool, então o total de conexões com o
+banco pode chegar a `workers * (DB_POOL_SIZE + DB_MAX_OVERFLOW)`. Esse total
+precisa ficar abaixo do `max_connections` do PostgreSQL, que por padrão é 100.
 
 ## Docker
 
@@ -141,9 +148,25 @@ uv run lint     # ruff check, ruff format --check e ty check
 uv run test     # testes de app/services com cobertura mínima de 85%
 ```
 
-O workflow `code-quality` roda os dois e gera o currículo com todos os
-modelos e idiomas, falhando se a checagem ATS falhar. Os PDFs ficam como
-artifacts.
+O `pre-commit` roda `ruff check`, `ruff format` e `ty` antes de cada commit,
+além de checar TOML, YAML, final de arquivo e arquivos acima de 5 MB. Para
+rodar em todos os arquivos: `uv run pre-commit run --all-files`. O `ruff` e o
+`ty` têm versão fixa em `pyproject.toml`, e o `.pre-commit-config.yaml` usa as
+mesmas versões. Ao atualizar um deles, altere os dois arquivos e rode
+`uv lock`.
+
+O workflow `code-quality` roda os dois comandos acima em todo pull request e
+push para a `main`, e gera o currículo com todos os modelos e idiomas,
+falhando se a checagem ATS falhar. Os PDFs ficam como artifacts.
+
+## Diagramas
+
+[`diagrams/database.mmd`](diagrams/database.mmd) tem o diagrama ER das
+tabelas: `app_user`, `auth_challenge`, `auth_session` e `auth_refresh_token`.
+`uv run python scripts/render_diagrams.py` renderiza os arquivos `.mmd` e
+`.mermaid` de `diagrams/` em PNG pelo serviço `https://mermaid.ink`. Use
+`--format both` para gerar PNG e SVG. A variável `MERMAID_INK_SERVER` troca o
+servidor.
 
 ## Roadmap
 

@@ -2,40 +2,77 @@ name: code-quality
 
 on:
   pull_request:
-    branches: [main]
+    branches:
+      - main
   push:
-    branches: [main]
+    branches:
+      - main
+
+permissions:
+  contents: read
+
+# A new push to a pull request cancels its previous run. Runs on main are not
+# cancelled, so every merge keeps its own result and resume artifacts.
+concurrency:
+  group: code-quality-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 jobs:
   lint-and-test:
     runs-on: ubuntu-latest
+    timeout-minutes: 10
+
     steps:
-      - uses: actions/checkout@v4
-      - uses: astral-sh/setup-uv@v6
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      # Reads the Python version from .python-version.
+      - name: Install uv
+        uses: astral-sh/setup-uv@v10
         with:
-          version: "0.12.5"
-      - run: uv sync --locked
-      - run: uv run ruff check app scripts tests main.py
-      - run: uv run ty check app scripts tests main.py
-      - run: uv run ruff format --check app scripts tests main.py
-      - run: uv run test
+          enable-cache: true
+
+      - name: Install dependencies
+        run: uv sync --locked
+
+      - name: Ruff lint
+        run: uv run ruff check app scripts tests main.py
+
+      - name: Ruff format
+        run: uv run ruff format --check app scripts tests main.py
+
+      - name: Ty
+        run: uv run ty check app scripts tests main.py
+
+      # Unit tests replace repositories with mocks and need no database.
+      - name: Unit tests
+        run: uv run test
 
   resume:
     # Builds the master resume with every template and language and fails when
     # the text extracted by pdftotext breaks the ATS check.
     runs-on: ubuntu-latest
+    timeout-minutes: 20
+
     steps:
-      - uses: actions/checkout@v4
-      - uses: astral-sh/setup-uv@v6
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v10
         with:
-          version: "0.12.5"
+          enable-cache: true
+
       - name: Install TeX Live and poppler-utils
         run: |
           sudo apt-get update
           sudo apt-get install -y --no-install-recommends \
             texlive-latex-base texlive-latex-recommended texlive-latex-extra \
             texlive-fonts-recommended lmodern poppler-utils
-      - run: uv sync --locked
+
+      - name: Install dependencies
+        run: uv sync --locked
+
       - name: Build and check
         run: |
           for template in $(uv run cv templates); do
@@ -43,7 +80,9 @@ jobs:
               uv run cv build --template "$template" --lang "$lang"
             done
           done
-      - uses: actions/upload-artifact@v4
+
+      - name: Upload resumes
+        uses: actions/upload-artifact@v7
         with:
           name: resumes
           path: build/**/*.pdf

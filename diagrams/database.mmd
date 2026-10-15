@@ -1,0 +1,66 @@
+%%{init: {"themeVariables": {"primaryColor": "#E5E7EB", "primaryBorderColor": "#9CA3AF", "primaryTextColor": "#111827", "lineColor": "#6B7280", "fontSize": "18px"}, "themeCSS": ".label.name p { font-weight: 700; font-size: 20px; } .label.attribute-type p, .label.attribute-name p, .label.attribute-keys p { font-size: 20px; } .edgeLabel p { color: #374151; font-size: 22px; font-weight: 600; }"}}%%
+erDiagram
+    direction LR
+
+    APP_USER ||--o{ AUTH_SESSION : "has"
+    AUTH_SESSION ||--o{ AUTH_REFRESH_TOKEN : "rotates"
+    AUTH_REFRESH_TOKEN |o--o| AUTH_REFRESH_TOKEN : "replaced by"
+
+    APP_USER {
+        bigint user_id PK
+        varchar(320) email UK "lowercase, unique while not deleted"
+        varchar(255) name "optional"
+        varchar(8) ui_language "pt-BR or en-US"
+        varchar(2) resume_language "pt or en"
+        varchar(64) default_template
+        timestamptz created_at
+        timestamptz updated_at
+        timestamptz deleted_at "optional"
+    }
+
+    AUTH_CHALLENGE {
+        bigint auth_challenge_id PK
+        varchar(320) email "no foreign key, the account may not exist"
+        varchar(8) language
+        varchar(64) public_id UK
+        varchar(64) code_digest "HMAC of the code"
+        varchar(45) request_ip "optional"
+        timestamptz expires_at
+        smallint attempt_count
+        timestamptz consumed_at "optional"
+        timestamptz created_at
+        timestamptz updated_at
+        timestamptz deleted_at "optional"
+    }
+
+    AUTH_SESSION {
+        bigint auth_session_id PK
+        bigint user_id FK
+        varchar(64) access_token_digest UK "SHA-256 of the token"
+        varchar(128) device_id
+        varchar(255) device_name "optional"
+        varchar(16) platform "optional, android, ios or web"
+        varchar(45) request_ip "optional"
+        varchar(512) user_agent "optional"
+        timestamptz access_expires_at
+        timestamptz absolute_expires_at
+        timestamptz authenticated_at
+        timestamptz last_used_at
+        timestamptz revoked_at "optional"
+        timestamptz created_at
+        timestamptz updated_at
+        timestamptz deleted_at "optional"
+    }
+
+    AUTH_REFRESH_TOKEN {
+        bigint auth_refresh_token_id PK
+        bigint auth_session_id FK
+        varchar(64) token_digest UK "SHA-256 of the token"
+        timestamptz expires_at
+        timestamptz consumed_at "optional"
+        bigint replaced_by_auth_refresh_token_id FK "optional"
+        timestamptz revoked_at "optional"
+        timestamptz created_at
+        timestamptz updated_at
+        timestamptz deleted_at "optional"
+    }

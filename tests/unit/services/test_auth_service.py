@@ -9,10 +9,10 @@ from unittest.mock import AsyncMock
 import pytest
 
 from app.infra.auth import AuthorizationError
-from app.infra.email import EmailMessage
 from app.models.auth_challenge import AuthChallenge
 from app.models.auth_refresh_token import AuthRefreshToken
 from app.models.auth_session import AuthSession
+from app.providers.email_provider import EmailMessage
 from app.services import auth_service
 from app.services.auth_service import (
     AuthenticationError,
