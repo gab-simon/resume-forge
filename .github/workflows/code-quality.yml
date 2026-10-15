@@ -1,0 +1,49 @@
+name: code-quality
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+
+jobs:
+  lint-and-test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v6
+        with:
+          version: "0.12.5"
+      - run: uv sync --locked
+      - run: uv run ruff check app scripts tests main.py
+      - run: uv run ty check app scripts tests main.py
+      - run: uv run ruff format --check app scripts tests main.py
+      - run: uv run test
+
+  resume:
+    # Builds the master resume with every template and language and fails when
+    # the text extracted by pdftotext breaks the ATS check.
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v6
+        with:
+          version: "0.12.5"
+      - name: Install TeX Live and poppler-utils
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends \
+            texlive-latex-base texlive-latex-recommended texlive-latex-extra \
+            texlive-fonts-recommended lmodern poppler-utils
+      - run: uv sync --locked
+      - name: Build and check
+        run: |
+          for template in $(uv run cv templates); do
+            for lang in pt en; do
+              uv run cv build --template "$template" --lang "$lang"
+            done
+          done
+      - uses: actions/upload-artifact@v4
+        with:
+          name: resumes
+          path: build/**/*.pdf

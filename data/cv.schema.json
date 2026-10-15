@@ -1,0 +1,429 @@
+{
+  "$defs": {
+    "Basics": {
+      "additionalProperties": false,
+      "description": "Header of the resume. Contact data stays in the page body.",
+      "properties": {
+        "name": {
+          "title": "Name",
+          "type": "string"
+        },
+        "headline": {
+          "$ref": "#/$defs/LocalizedText"
+        },
+        "location": {
+          "title": "Location",
+          "type": "string"
+        },
+        "email": {
+          "title": "Email",
+          "type": "string"
+        },
+        "phone": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Phone"
+        },
+        "links": {
+          "description": "Visible link text, such as linkedin.com/in/user.",
+          "items": {
+            "type": "string"
+          },
+          "title": "Links",
+          "type": "array"
+        }
+      },
+      "required": [
+        "name",
+        "headline",
+        "location",
+        "email"
+      ],
+      "title": "Basics",
+      "type": "object"
+    },
+    "Bullet": {
+      "additionalProperties": false,
+      "description": "Achievement of an experience, with tags and pre-approved variants.",
+      "properties": {
+        "id": {
+          "pattern": "^[a-z0-9][a-z0-9-]*$",
+          "title": "Id",
+          "type": "string"
+        },
+        "tags": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Tags",
+          "type": "array"
+        },
+        "text": {
+          "$ref": "#/$defs/LocalizedText"
+        },
+        "variants": {
+          "items": {
+            "$ref": "#/$defs/LocalizedText"
+          },
+          "title": "Variants",
+          "type": "array"
+        }
+      },
+      "required": [
+        "id",
+        "text"
+      ],
+      "title": "Bullet",
+      "type": "object"
+    },
+    "Certification": {
+      "additionalProperties": false,
+      "description": "Certification with its official name, issuer and year.",
+      "properties": {
+        "name": {
+          "title": "Name",
+          "type": "string"
+        },
+        "issuer": {
+          "title": "Issuer",
+          "type": "string"
+        },
+        "year": {
+          "title": "Year",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "name",
+        "issuer",
+        "year"
+      ],
+      "title": "Certification",
+      "type": "object"
+    },
+    "Education": {
+      "additionalProperties": false,
+      "description": "Degree or course.",
+      "properties": {
+        "institution": {
+          "title": "Institution",
+          "type": "string"
+        },
+        "degree": {
+          "$ref": "#/$defs/LocalizedText"
+        },
+        "start": {
+          "anyOf": [
+            {
+              "pattern": "^\\d{4}(-(0[1-9]|1[0-2]))?$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Start"
+        },
+        "end": {
+          "anyOf": [
+            {
+              "pattern": "^\\d{4}(-(0[1-9]|1[0-2]))?$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Empty means in progress.",
+          "title": "End"
+        }
+      },
+      "required": [
+        "institution",
+        "degree"
+      ],
+      "title": "Education",
+      "type": "object"
+    },
+    "Experience": {
+      "additionalProperties": false,
+      "description": "Position held at a company.",
+      "properties": {
+        "id": {
+          "pattern": "^[a-z0-9][a-z0-9-]*$",
+          "title": "Id",
+          "type": "string"
+        },
+        "company": {
+          "title": "Company",
+          "type": "string"
+        },
+        "title": {
+          "$ref": "#/$defs/LocalizedText"
+        },
+        "location": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/LocalizedText"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "start": {
+          "pattern": "^\\d{4}-(0[1-9]|1[0-2])$",
+          "title": "Start",
+          "type": "string"
+        },
+        "end": {
+          "anyOf": [
+            {
+              "pattern": "^\\d{4}-(0[1-9]|1[0-2])$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Empty means current.",
+          "title": "End"
+        },
+        "bullets": {
+          "items": {
+            "$ref": "#/$defs/Bullet"
+          },
+          "title": "Bullets",
+          "type": "array"
+        },
+        "technologies": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Technologies",
+          "type": "array"
+        }
+      },
+      "required": [
+        "id",
+        "company",
+        "title",
+        "start"
+      ],
+      "title": "Experience",
+      "type": "object"
+    },
+    "Lang": {
+      "enum": [
+        "pt",
+        "en"
+      ],
+      "type": "string"
+    },
+    "Language": {
+      "additionalProperties": false,
+      "description": "Spoken language and level.",
+      "properties": {
+        "name": {
+          "$ref": "#/$defs/LocalizedText"
+        },
+        "level": {
+          "$ref": "#/$defs/LocalizedText"
+        }
+      },
+      "required": [
+        "name",
+        "level"
+      ],
+      "title": "Language",
+      "type": "object"
+    },
+    "LocalizedText": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "additionalProperties": {
+            "type": "string"
+          },
+          "propertyNames": {
+            "$ref": "#/$defs/Lang"
+          },
+          "type": "object"
+        }
+      ]
+    },
+    "Project": {
+      "additionalProperties": false,
+      "description": "Open source, side project or relevant case.",
+      "properties": {
+        "id": {
+          "pattern": "^[a-z0-9][a-z0-9-]*$",
+          "title": "Id",
+          "type": "string"
+        },
+        "name": {
+          "title": "Name",
+          "type": "string"
+        },
+        "url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Url"
+        },
+        "description": {
+          "$ref": "#/$defs/LocalizedText"
+        },
+        "tags": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Tags",
+          "type": "array"
+        },
+        "technologies": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Technologies",
+          "type": "array"
+        }
+      },
+      "required": [
+        "id",
+        "name",
+        "description"
+      ],
+      "title": "Project",
+      "type": "object"
+    },
+    "SectionName": {
+      "description": "Sections a resume can show, in the default order.",
+      "enum": [
+        "summary",
+        "experience",
+        "projects",
+        "skills",
+        "education",
+        "certifications",
+        "languages"
+      ],
+      "title": "SectionName",
+      "type": "string"
+    },
+    "SkillGroup": {
+      "additionalProperties": false,
+      "description": "Category of technical skills.",
+      "properties": {
+        "category": {
+          "$ref": "#/$defs/LocalizedText"
+        },
+        "items": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Items",
+          "type": "array"
+        }
+      },
+      "required": [
+        "category",
+        "items"
+      ],
+      "title": "SkillGroup",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "description": "Whole resume, as written in ``data/cv.yaml``.",
+  "properties": {
+    "basics": {
+      "$ref": "#/$defs/Basics"
+    },
+    "summary": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/LocalizedText"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "experience": {
+      "items": {
+        "$ref": "#/$defs/Experience"
+      },
+      "title": "Experience",
+      "type": "array"
+    },
+    "projects": {
+      "items": {
+        "$ref": "#/$defs/Project"
+      },
+      "title": "Projects",
+      "type": "array"
+    },
+    "skills": {
+      "items": {
+        "$ref": "#/$defs/SkillGroup"
+      },
+      "title": "Skills",
+      "type": "array"
+    },
+    "education": {
+      "items": {
+        "$ref": "#/$defs/Education"
+      },
+      "title": "Education",
+      "type": "array"
+    },
+    "certifications": {
+      "items": {
+        "$ref": "#/$defs/Certification"
+      },
+      "title": "Certifications",
+      "type": "array"
+    },
+    "languages": {
+      "items": {
+        "$ref": "#/$defs/Language"
+      },
+      "title": "Languages",
+      "type": "array"
+    },
+    "section_order": {
+      "description": "Sections in the order they appear. Omitted ones are hidden.",
+      "items": {
+        "$ref": "#/$defs/SectionName"
+      },
+      "title": "Section Order",
+      "type": "array"
+    }
+  },
+  "required": [
+    "basics"
+  ],
+  "title": "Resume Forge CV",
+  "type": "object"
+}

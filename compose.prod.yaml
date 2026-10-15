@@ -1,0 +1,89 @@
+services:
+  # Applies the pending migrations and exits. The API starts only after it
+  # finishes without error. It builds the same image as the API service, so
+  # Compose does not try to pull it from a registry. Only this service
+  # connects as the role that owns the tables.
+  migrate:
+    image: resume-forge:latest
+
+    container_name: resume-forge-migrate
+
+    build:
+      dockerfile: Dockerfile
+      context: .
+
+    command:
+      - alembic
+      - upgrade
+      - head
+
+    restart: "no"
+
+    env_file:
+      - .env
+
+    environment:
+      APP_ENV: production
+      DB_URL: ${DB_URL_DOCKER}
+      DB_MIGRATION_URL: ${DB_MIGRATION_URL_DOCKER:?DB_MIGRATION_URL_DOCKER must be set for the migrate service}
+
+    networks:
+      - resume-forge-network
+
+  resume-forge:
+    image: resume-forge:latest
+
+    container_name: resume-forge
+
+    build:
+      dockerfile: Dockerfile
+      context: .
+
+    command:
+      - uvicorn
+      - main:app
+      - --host
+      - 0.0.0.0
+      - --port
+      - "8000"
+
+    restart: unless-stopped
+
+    # The image has no curl, so the probe uses the Python standard library.
+    healthcheck:
+      test:
+        - CMD
+        - python
+        - -c
+        - |
+          import urllib.request
+          urllib.request.urlopen('http://localhost:8000/health/v1/readiness', timeout=3)
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 15s
+
+    ports:
+      - "9000:8000"
+
+    env_file:
+      - .env
+
+    environment:
+      APP_ENV: production
+      DB_URL: ${DB_URL_DOCKER}
+
+    depends_on:
+      migrate:
+        condition: service_completed_successfully
+
+    volumes:
+      - ./data:/app/data:ro
+      - ./build:/app/build
+
+    networks:
+      - resume-forge-network
+
+networks:
+  resume-forge-network:
+    name: resume-forge-network

@@ -1,0 +1,94 @@
+((# classic: based on Jake's Resume (github.com/jakegut/resume, MIT). #))
+((# One column, serif, uppercase titles with a rule, title left and dates right. #))
+\documentclass[letterpaper,11pt]{article}
+((* include '_shared/preamble.tex.j2' *))
+
+\addtolength{\oddsidemargin}{-0.5in}
+\addtolength{\evensidemargin}{-0.5in}
+\addtolength{\textwidth}{1in}
+\addtolength{\topmargin}{-.5in}
+\addtolength{\textheight}{1.0in}
+
+\titleformat{\section}{\vspace{-4pt}\raggedright\large\bfseries}{}{0em}{\MakeUppercase}[\titlerule\vspace{-5pt}]
+
+\newcommand{\resumeItem}[1]{\item\small{#1 \vspace{-2pt}}}
+\newcommand{\resumeSubheading}[4]{
+  \vspace{-2pt}\item
+    \begin{tabular*}{0.97\textwidth}[t]{l@{\extracolsep{\fill}}r}
+      \textbf{#1} & #2 \\
+      \textit{\small #3} & \textit{\small #4} \\
+    \end{tabular*}\vspace{-7pt}
+}
+\newcommand{\resumeSubHeadingListStart}{\begin{itemize}[leftmargin=0.15in, label={}]}
+\newcommand{\resumeSubHeadingListEnd}{\end{itemize}}
+\newcommand{\resumeItemListStart}{\begin{itemize}[label=\textbullet]}
+\newcommand{\resumeItemListEnd}{\end{itemize}\vspace{-5pt}}
+
+\begin{document}
+
+\begin{center}
+  {\Huge\bfseries << cv.name >>} \\ \vspace{2pt}
+  << cv.headline >> \\ \vspace{1pt}
+  \small << cv.location >>
+((* if cv.phone *))
+  $|$ << cv.phone >>
+((* endif *))
+  $|$ \href{<< cv.email | url >>}{<< cv.email >>}
+((* for link in cv.links *))
+  $|$ \href{<< link | url >>}{<< link >>}
+((* endfor *))
+\end{center}
+
+((* for section in cv.sections *))
+\section{<< section.title >>}
+((* if section.name == 'summary' *))
+\small{<< cv.summary >>}
+((* elif section.name == 'experience' *))
+\resumeSubHeadingListStart
+((* for job in cv.experience *))
+  \resumeSubheading{<< job.title >>}{<< job.period >>}{<< job.company >>}{<< job.location >>}
+((* if job.bullets or job.technologies *))
+  \resumeItemListStart
+((* for bullet in job.bullets *))
+    \resumeItem{<< bullet >>}
+((* endfor *))
+((* if job.technologies *))
+    \resumeItem{\textbf{<< cv.technologies_label >>:} << job.technologies | join(', ') >>.}
+((* endif *))
+  \resumeItemListEnd
+((* endif *))
+((* endfor *))
+\resumeSubHeadingListEnd
+((* elif section.name == 'projects' *))
+\resumeSubHeadingListStart
+((* for project in cv.projects *))
+  \item\small{\textbf{<< project.name >>}((* if project.url *)) ($|$ \href{<< project.url | url >>}{<< project.url >>})((* endif *)). << project.description >>((* if project.technologies *)) \textit{<< cv.technologies_label >>: << project.technologies | join(', ') >>.}((* endif *))}
+((* endfor *))
+\resumeSubHeadingListEnd
+((* elif section.name == 'skills' *))
+\begin{itemize}[leftmargin=0.15in, label={}]
+  \small{\item{
+((* for group in cv.skills *))
+    \textbf{<< group.category >>:} << group.items | join(', ') >>((* if not loop.last *)) \\((* endif *))
+
+((* endfor *))
+  }}
+\end{itemize}
+((* elif section.name == 'education' *))
+\resumeSubHeadingListStart
+((* for item in cv.education *))
+  \resumeSubheading{<< item.degree >>}{<< item.period >>}{<< item.institution >>}{}
+((* endfor *))
+\resumeSubHeadingListEnd
+((* elif section.name == 'certifications' *))
+\begin{itemize}[leftmargin=0.15in, label=\textbullet]
+((* for item in cv.certifications *))
+  \item\small{<< item >>}
+((* endfor *))
+\end{itemize}
+((* elif section.name == 'languages' *))
+\small{((* for item in cv.languages *))<< item >>((* if not loop.last *)) $|$ ((* endif *))((* endfor *))}
+((* endif *))
+
+((* endfor *))
+\end{document}
