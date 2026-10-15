@@ -75,7 +75,10 @@ CLI command -> Service
   Never accept a user id from a request body, a query or an LLM output; the
   user comes from the context.
 - Never log, trace or commit codes, tokens, digests or the email body.
-  `EMAIL_BACKEND=console` logs the code and exists only for local development.
+  In development without `SMTP_HOST` (`Settings.uses_dev_login_code`), every
+  code is `DEV_LOGIN_CODE` (`123456`) and the email goes to the log. Keep that
+  rule tied to `APP_ENV=development`: in production a missing SMTP server
+  must make the login unavailable, never accept a known code.
 - Services that need a user call `require_user(ctx)` from `app/infra/auth.py`
   and raise `AuthorizationError` otherwise.
 - Every user-owned table has `user_id` and a `user_isolation` policy created

@@ -91,8 +91,11 @@ A API fica em `http://localhost:9000` e a documentação em
    token dura 60 minutos; `POST /api/v1/auth/refresh` troca o refresh token
    por um par novo. Reusar um refresh token já trocado revoga a sessão.
 
-Com `EMAIL_BACKEND=console` o e-mail não é enviado: o código aparece no log
-da API. Em produção use `EMAIL_BACKEND=smtp` com as variáveis `SMTP_*`.
+Em desenvolvimento (`APP_ENV=development`) sem `SMTP_HOST`, nenhum e-mail é
+enviado: todo código de login é **`123456`** e o e-mail aparece no log da
+API. Com `SMTP_HOST` preenchido, o código é aleatório e vai por e-mail. Em
+produção (`APP_ENV=production`, já definido no `compose.prod.yaml`) o código
+fixo nunca vale: sem SMTP, o login responde 503.
 
 | Rota | Uso |
 | --- | --- |
@@ -113,7 +116,8 @@ O front gera o client a partir do OpenAPI. `uv run cv openapi export -o
 | `DB_URL`, `DB_MIGRATION_URL` | PostgreSQL, sem o esquema da URI: papel da aplicação e dono das tabelas |
 | `AUTH_OTP_SECRET` | Segredo de pelo menos 32 caracteres para o digest dos códigos. Sem ele, o login responde 503 |
 | `AUTH_OTP_*`, `AUTH_ACCESS_TOKEN_TTL_MINUTES`, `AUTH_REFRESH_TOKEN_IDLE_TTL_DAYS`, `AUTH_SESSION_ABSOLUTE_TTL_DAYS` | Validade do código (10 min), tentativas (5), limites por e-mail e IP, validade dos tokens |
-| `EMAIL_BACKEND`, `EMAIL_FROM`, `SMTP_*` | Envio do código: `smtp` ou `console` (desenvolvimento) |
+| `APP_ENV` | `development` (padrão) ou `production`. Em `development` sem `SMTP_HOST`, o código de login é sempre `123456` |
+| `EMAIL_FROM`, `SMTP_*` | Envio do código por e-mail. `SMTP_HOST` vazio só é aceito em `development` |
 | `RESUME_DATA_DIR`, `RESUME_TEMPLATES_DIR`, `RESUME_OUTPUT_DIR` | Diretórios de dados, modelos e saída. Padrão: `data/`, `templates/`, `build/` |
 | `LATEX_COMMAND`, `PDFTOTEXT_COMMAND` | Executáveis externos. Padrão: `pdflatex`, `pdftotext` |
 

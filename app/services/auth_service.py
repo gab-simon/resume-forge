@@ -31,6 +31,9 @@ from app.repositories import (
 from app.utils import get_current_time
 
 _OTP_DIGITS = 6
+# Code of every login in development without an SMTP server. See
+# Settings.uses_dev_login_code.
+DEV_LOGIN_CODE = '123456'
 _TOKEN_BYTES = 48
 _MAX_EMAIL_LENGTH = 320
 # Platforms a client may declare when it verifies a code.
@@ -164,7 +167,11 @@ async def request_login_code(
 
     public_id = secrets.token_urlsafe(32)
     expires_at = now + timedelta(seconds=settings.auth_otp_ttl_seconds)
-    code = f'{secrets.randbelow(10**_OTP_DIGITS):0{_OTP_DIGITS}d}'
+    code = (
+        DEV_LOGIN_CODE
+        if settings.uses_dev_login_code
+        else f'{secrets.randbelow(10**_OTP_DIGITS):0{_OTP_DIGITS}d}'
+    )
 
     await auth_challenge_repository.invalidate_open_for_email(
         ctx,
@@ -800,6 +807,7 @@ def _token_digest(token: str) -> str:
 
 
 __all__ = (
+    'DEV_LOGIN_CODE',
     'AuthenticatedSession',
     'AuthenticationChallengeResult',
     'AuthenticationError',

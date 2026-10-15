@@ -23,6 +23,7 @@ services:
       - .env
 
     environment:
+      APP_ENV: production
       DB_URL: ${DB_URL_DOCKER}
       DB_MIGRATION_URL: ${DB_MIGRATION_URL_DOCKER:?DB_MIGRATION_URL_DOCKER must be set for the migrate service}
 
@@ -69,6 +70,7 @@ services:
       - .env
 
     environment:
+      APP_ENV: production
       DB_URL: ${DB_URL_DOCKER}
 
     depends_on:

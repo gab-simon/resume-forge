@@ -14,7 +14,9 @@ ROOT_DIR = Path(__file__).parent.parent.parent
 class Settings(BaseSettings):
     """Application settings."""
 
-    # Application
+    # Application. ``production`` turns off the conveniences of local
+    # development, such as the fixed login code.
+    app_env: Literal['development', 'production'] = 'development'
     app_name: str = ''
     app_version: str = ''
     app_description: str = ''
@@ -54,9 +56,8 @@ class Settings(BaseSettings):
     auth_refresh_token_idle_ttl_days: int = Field(default=30, ge=1, le=180)
     auth_session_absolute_ttl_days: int = Field(default=90, ge=1, le=365)
 
-    # Email delivery of login codes. ``console`` writes the code to the log and
-    # is meant only for local development.
-    email_backend: Literal['smtp', 'console'] = 'smtp'
+    # Email delivery of login codes. Without SMTP_HOST in development, the
+    # email goes to the log and every login code is DEV_LOGIN_CODE.
     email_from: str = 'Resume Forge <no-reply@localhost>'
     smtp_host: str | None = None
     smtp_port: int = Field(default=587, ge=1, le=65535)
@@ -87,6 +88,15 @@ class Settings(BaseSettings):
             for origin in self.cors_allowed_origins.split(',')
             if origin.strip()
         ]
+
+    @property
+    def uses_dev_login_code(self) -> bool:
+        """Whether login codes are fixed because no SMTP server is configured.
+
+        Only in development: in production a missing SMTP server makes the
+        login unavailable instead of accepting a code anyone knows.
+        """
+        return self.app_env == 'development' and not self.smtp_host
 
     @property
     def db_conn_uri(self) -> str:

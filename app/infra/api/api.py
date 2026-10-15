@@ -61,6 +61,11 @@ def _generate_unique_id(route: APIRoute) -> str:
 @asynccontextmanager
 async def lifespan(_app: FastAPI) -> AsyncGenerator[None]:
     logger.info('Starting Resume Forge up...')
+    if get_settings().uses_dev_login_code:
+        logger.warning(
+            'No SMTP_HOST in development: every login code is 123456 and '
+            'emails go to this log. Set APP_ENV=production on a server.'
+        )
     await _warn_when_user_isolation_is_bypassed()
     try:
         yield

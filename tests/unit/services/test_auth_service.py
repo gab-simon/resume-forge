@@ -208,6 +208,39 @@ async def test_request_login_code_writes_portuguese_email(
 
 
 @pytest.mark.parametrize(
+    ('settings', 'fixed'),
+    [
+        ({'app_env': 'development', 'smtp_host': None}, True),
+        ({'app_env': 'development', 'smtp_host': 'smtp.example.com'}, False),
+        ({'app_env': 'production', 'smtp_host': None}, False),
+    ],
+)
+async def test_request_login_code_is_fixed_only_in_development_without_smtp(
+    monkeypatch: pytest.MonkeyPatch, settings: dict[str, str | None], fixed: bool
+) -> None:
+    """Use 123456 only in development without SMTP, never in production."""
+    _mock_request_limits(monkeypatch)
+    _mock(
+        monkeypatch,
+        auth_service.auth_challenge_repository,
+        invalidate_open_for_email=0,
+        create=_challenge(),
+    )
+    monkeypatch.setattr(auth_service.secrets, 'randbelow', lambda _limit: 654321)
+    sender = CaptureSender()
+
+    await auth_service.request_login_code(
+        mock_context(settings=make_settings(**settings)),
+        email='ana@example.com',
+        language='en-US',
+        sender=sender,
+    )
+
+    code = sender.messages[0].subject.rsplit(' ', 1)[-1]
+    assert code == (auth_service.DEV_LOGIN_CODE if fixed else '654321')
+
+
+@pytest.mark.parametrize(
     'email',
     ['', 'ana', 'ana@', '@example.com', 'ana@localhost', 'a na@example.com'],
 )

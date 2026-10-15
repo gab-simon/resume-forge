@@ -83,7 +83,7 @@ class SmtpEmailSender:
 
 
 class ConsoleEmailSender:
-    """Write emails to the log instead of sending them. Local development only."""
+    """Write emails to the log instead of sending them. Development only."""
 
     async def send(self, message: EmailMessage) -> None:
         """Log one email, including its body.
@@ -95,7 +95,7 @@ class ConsoleEmailSender:
         """
         _, address = parseaddr(message.to)
         logger.warning(
-            'EMAIL_BACKEND=console: email to {to} not sent.\n{subject}\n{text}',
+            'No SMTP_HOST: email to {to} not sent.\n{subject}\n{text}',
             to=address,
             subject=message.subject,
             text=message.text,
@@ -103,7 +103,7 @@ class ConsoleEmailSender:
 
 
 def get_email_sender(settings: Settings) -> EmailSender:
-    """Build the sender selected by ``EMAIL_BACKEND``.
+    """Build the SMTP sender, or the console sender in development without SMTP.
 
     Parameters
     ----------
@@ -113,9 +113,10 @@ def get_email_sender(settings: Settings) -> EmailSender:
     Returns
     -------
     EmailSender
-        The SMTP sender, or the console sender for local development.
+        The SMTP sender, or the console sender when
+        ``settings.uses_dev_login_code`` is true.
     """
-    if settings.email_backend == 'console':
+    if settings.uses_dev_login_code:
         return ConsoleEmailSender()
     return SmtpEmailSender(settings)
 
