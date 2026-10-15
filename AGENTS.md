@@ -124,6 +124,42 @@ inherit `SQLBaseModel` (schema `resume_forge`), have a primary key and
 reviewed migration in `alembic/versions/`. `get_db_session()` owns
 commit/rollback; never commit in services or repositories.
 
+## Commits
+
+Commit or push only when the user asks. Work on a branch, never on `main` or
+`develop` directly: `feat/<short-topic>`, `fix/<short-topic>`, `chore/<short-topic>`.
+
+Message format, in English:
+
+```text
+<type>: <what changed, imperative, lowercase, no period>
+
+<optional body: why, and what a reviewer cannot see in the diff>
+```
+
+- Types: `feat`, `fix`, `refactor`, `test`, `docs`, `chore`, `ci`, `build`.
+- Subject at most 72 characters. Body lines at most 72 characters, only
+  when the subject is not enough; at most 5 short lines or bullets. Do not
+  list every file or repeat the diff.
+- No trailers or attribution: no `Co-Authored-By`, `Signed-off-by` or
+  "Generated with" lines, and no links to AI tools or chat sessions, in
+  commits, pull requests or versioned files.
+- One logical change per commit. Split unrelated changes; do not mix a
+  refactor with a feature.
+- Commit only after `uv run lint` and `uv run test` pass.
+- Never commit secrets, `.env` files, build output, caches or test reports.
+- A schema change and its Alembic migration go in the same commit.
+- Prefer a new commit to rewriting history. Amend or force-push only when
+  the user asks, and only with `--force-with-lease` on a feature branch.
+
+Examples:
+
+```text
+feat: add email code login
+fix: keep the code step open after a wrong code
+docs: describe the restricted database role
+```
+
 ## Verification
 
 Unit tests cover only `app/services/`, in `tests/unit/services/`, built with
