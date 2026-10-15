@@ -1,0 +1,239 @@
+# yaml-language-server: $schema=./cv.schema.json
+# Fonte única do currículo. Gere o schema com `uv run cv schema`.
+# Texto simples vale para pt e en; use {pt: ..., en: ...} para traduzir.
+
+basics:
+  name: Gabriel Simon
+  headline:
+    pt: Engenheiro de Software Sênior
+    en: Senior Software Engineer
+  location: Curitiba, PR
+  email: gabrielsimonbr@gmail.com
+  phone: +55 (49) 99102-88129
+  links:
+    - linkedin.com/in/gab-simon
+    - github.com/gab-simon
+    - gab-simon.vercel.app
+
+summary:
+  pt: >-
+    Engenheiro de Software com mais de 5 anos de experiência construindo e escalando
+    aplicações web e mobile com React, React Native, TypeScript, Node.js e tecnologias
+    frontend modernas. Experiência em arquitetura de software, otimização de performance,
+    plataformas de assinatura, integrações de APIs e CI/CD. Atualmente atua em plataformas
+    de e-commerce de grande escala do ecossistema Nestlé, incluindo soluções de assinatura
+    em Magento, integrações B2B e plataformas internas. Liderou a arquitetura de aplicações
+    mobile e entregou produtos com mais de 50.000 downloads.
+  en: >-
+    Software Engineer with 5+ years of experience building and scaling web and mobile
+    applications using React, React Native, TypeScript, Node.js, and modern frontend
+    technologies. Experienced in software architecture, performance optimization,
+    subscription-based platforms, API integrations, and CI/CD. Currently contributing to
+    large-scale e-commerce platforms within the Nestlé ecosystem, including Magento-based
+    subscription solutions, B2B integrations, and internal platforms. Proven experience
+    leading mobile application architecture and delivering products with over 50,000
+    downloads.
+
+experience:
+  - id: nestle
+    company: Nestlé (via Mathex Consulting)
+    title:
+      pt: Desenvolvedor de Software Sênior
+      en: Senior Software Developer
+    location: {pt: Remoto, en: Remote}
+    start: 2025-02
+    end: null
+    bullets:
+      - id: nestle-wake-commerce
+        tags: [react, nodejs, nextjs, vite, ecommerce, performance]
+        text:
+          pt: >-
+            Mantenho e evoluo uma das maiores plataformas de e-commerce da Nestlé, construída
+            em Wake Commerce, entregando novas funcionalidades e garantindo estabilidade,
+            performance e escalabilidade com React, Node.js, Next.js e Vite.
+          en: >-
+            Maintain and evolve one of Nestlé's largest e-commerce platforms, built on Wake
+            Commerce, delivering new features and ensuring stability, performance, and
+            scalability using React, Node.js, Next.js, and Vite.
+      - id: nestle-magento-subscriptions
+        tags: [magento, ecommerce, performance, subscriptions]
+        text:
+          pt: >-
+            Tive papel central na melhoria de performance do e-commerce em Magento da Nestlé
+            Nutrition e na implementação de assinaturas, suportando compras recorrentes e
+            melhorando a experiência do cliente.
+          en: >-
+            Played a key role in improving the performance of Nestlé Nutrition's
+            Magento-based e-commerce platform and implementing subscription features,
+            supporting recurring purchases and enhancing the customer experience.
+      - id: nestle-b2b-erp
+        tags: [b2b, erp, integrations, api]
+        text:
+          pt: >-
+            Contribuí para escalar uma plataforma B2B com integrações a ERP, melhorando os
+            fluxos de varejistas e equipes de vendas e otimizando processos de negócio.
+          en: >-
+            Contributed to scaling a B2B platform with ERP integrations, improving workflows
+            for retailers and sales teams while optimizing operational efficiency and
+            business processes.
+      - id: nestle-cms-email-builder
+        tags: [cms, low-code, react]
+        text:
+          pt: >-
+            Projetei e desenvolvi soluções de CMS no ecossistema Nestlé Health Science,
+            incluindo um construtor de e-mails low-code padronizado que agilizou as operações
+            de marketing e comunicação.
+          en: >-
+            Designed and developed CMS solutions within the Nestlé Health Science ecosystem,
+            including a standardized low-code email builder that streamlined marketing and
+            communication operations.
+    technologies: [React, Next.js, Vite, TypeScript, Node.js, Magento, Docker, React Native,
+      Azure DevOps, CI/CD, Git, Wake Commerce]
+
+  - id: smart-innovation
+    company: Smart Innovation
+    title:
+      pt: Engenheiro de Software
+      en: Software Engineer
+    location: {pt: Remoto, en: Remote}
+    start: 2023-02
+    end: 2025-02
+    bullets:
+      - id: smart-cadu-architecture
+        tags: [react-native, mobile, architecture]
+        text:
+          pt: >-
+            Arquitetei e liderei a base mobile do CADU e do CADU Agente, aplicativos de
+            atendimento ao cidadão para agendamentos, solicitações municipais e acesso a
+            informações públicas.
+          en: >-
+            Architected and led the mobile foundation of CADU and CADU Agente, citizen
+            service applications for scheduling appointments, submitting municipal requests,
+            and accessing public information.
+      - id: smart-cadu-releases
+        tags: [fastlane, ci-cd, redux, push-notifications, mobile]
+        text:
+          pt: >-
+            Desenvolvi funcionalidades centrais e implementei pipelines de release
+            automatizados com Fastlane, notificações push, localização e gerenciamento de
+            estado com Redux. Os aplicativos passaram de 10.000 downloads.
+          en: >-
+            Developed core features and implemented automated release pipelines using
+            Fastlane, push notifications, localization, and Redux state management. The
+            applications surpassed 10,000 downloads.
+      - id: smart-seniorcheck
+        tags: [python, django, api, healthcare]
+        text:
+          pt: >-
+            Contribuí com o SeniorCheck, plataforma de monitoramento de saúde, desenvolvendo
+            endpoints seguros de cadastro de usuários e integrando funcionalidades mobile às
+            APIs existentes.
+          en: >-
+            Contributed to SeniorCheck, a healthcare monitoring platform, developing secure
+            backend endpoints for user registration and integrating mobile features with
+            existing APIs.
+    technologies: [React Native, Redux, React, TypeScript, Firebase, Fastlane, Jest, Detox,
+      Python, Django, Ionic, Docker]
+
+  - id: klupp
+    company: Klupp
+    title:
+      pt: Engenheiro de Software Full-Stack
+      en: Full-Stack Software Engineer
+    location: {pt: Remoto, en: Remote}
+    start: 2021-09
+    end: 2023-02
+    bullets:
+      - id: klupp-lifecycle
+        tags: [react-native, mobile, android, ios, architecture]
+        text:
+          pt: >-
+            Desenvolvi aplicativos mobile em todo o ciclo de vida do produto, da definição de
+            arquiteturas escaláveis à publicação e manutenção em Android e iOS.
+          en: >-
+            Developed mobile applications throughout the complete product lifecycle, from
+            defining scalable architectures to publishing and maintaining applications on
+            Android and iOS.
+      - id: klupp-offline-first
+        tags: [sqlite, redux, offline-first, geolocation, push-notifications, performance]
+        text:
+          pt: >-
+            Implementei geolocalização, notificações push, armazenamento offline-first com
+            SQLite e Redux e integrações de APIs, com foco em performance e experiência do
+            usuário.
+          en: >-
+            Implemented geolocation, push notifications, offline-first storage with SQLite
+            and Redux, and API integrations focused on application performance and user
+            experience.
+      - id: klupp-brasil-convenios
+        tags: [mobile, react-native]
+        text:
+          pt: >-
+            Entreguei soluções para benefícios, energia, logística e operação offline,
+            incluindo o Brasil Convênios, aplicativo que passou de 50.000 downloads.
+          en: >-
+            Delivered solutions across benefits, energy, logistics, and offline operation
+            systems, including Brasil Convênios, a mobile application that surpassed 50,000
+            downloads.
+    technologies: [React Native, TypeScript, Node.js, Firebase, Ionic, SQLite, Redux, Android,
+      iOS, JavaScript, Git]
+
+projects:
+  - id: cardapio-ru
+    name: Cardápio RU
+    description:
+      pt: >-
+        Aplicativo Android para estudantes consultarem o cardápio diário do restaurante
+        universitário por campus.
+      en: >-
+        Developed an Android application for university students to access daily restaurant
+        menus by campus.
+    tags: [kotlin, android, mvvm]
+    technologies: [Kotlin, Android Widgets, MVVM, Retrofit, Figma]
+  - id: meme-generator
+    name: Meme Generator
+    description:
+      pt: >-
+        Aplicativo mobile para gerar memes a partir de templates, imagens aleatórias e
+        conteúdo enviado pelo usuário.
+      en: >-
+        Built a mobile application for generating memes using image templates, random
+        images, and user-uploaded content.
+    tags: [react-native, python, opencv]
+    technologies: [React Native, Java, Python, OpenCV, Figma]
+  - id: termo
+    name: Termo
+    description:
+      pt: >-
+        Jogo mobile interativo de adivinhar palavras inspirado no Termo, com foco em
+        experiência do usuário e design de interface.
+      en: >-
+        Developed an interactive mobile word-guessing game inspired by Termo, focusing on
+        user experience and interface design.
+    tags: [react-native, ux]
+    technologies: [React Native, Figma]
+
+skills:
+  - category: {pt: Linguagens, en: Languages}
+    items: [TypeScript, JavaScript, Python, Kotlin, Go]
+  - category: Frontend
+    items: [React, Next.js, Vite, HTML, CSS, Styled Components]
+  - category: Mobile
+    items: [React Native, Redux, Android, iOS, Ionic]
+  - category: Backend
+    items: [Node.js, Django, REST APIs]
+  - category: {pt: Plataformas, en: Platforms}
+    items: [Magento, Wake Commerce, Firebase, SQLite]
+  - category: {pt: DevOps e Ferramentas, en: DevOps & Tools}
+    items: [Docker, Git, Azure DevOps, CI/CD, Fastlane, Jest, Detox]
+
+education:
+  - institution: Universidade Federal do Paraná (UFPR)
+    degree:
+      pt: Bacharelado em Ciência da Computação
+      en: Bachelor of Computer Science
+    start: '2021'
+    end: null
+
+# Ordem do CV de referência. Remova uma seção para escondê-la.
+section_order: [summary, skills, experience, education, projects]

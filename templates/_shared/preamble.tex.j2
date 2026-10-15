@@ -1,0 +1,32 @@
+((# Rules every template follows so ATS parsers read the PDF as text. #))
+((# The caller sets paper size and font size in \documentclass. #))
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{lmodern}
+\usepackage{fancyhdr}
+\usepackage{titlesec}
+\usepackage{enumitem}
+\usepackage{tabularx}
+\usepackage[hidelinks]{hyperref}
+
+% Unicode map for ligatures and symbols, so "fi" is extracted as two letters.
+\input{glyphtounicode}
+\pdfgentounicode=1
+
+\hypersetup{
+  pdftitle={<< cv.name >> -- << cv.headline >>},
+  pdfauthor={<< cv.name >>},
+  pdfkeywords={<< cv.keywords | join(', ') >>},
+  pdflang={((* if cv.lang == 'pt' *))pt-BR((* else *))en-US((* endif *))},
+}
+
+% Headers and footers stay empty: many parsers ignore them.
+\pagestyle{fancy}
+\fancyhf{}
+\renewcommand{\headrulewidth}{0pt}
+\renewcommand{\footrulewidth}{0pt}
+
+\urlstyle{same}
+\raggedbottom
+\raggedright
+\setlength{\tabcolsep}{0in}

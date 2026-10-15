@@ -1,0 +1,45 @@
+{# Plain text in the reading order of the PDF, to paste in ATS forms such as Gupy. #}
+{{ cv.name }}
+{{ cv.headline }}
+{{ ([cv.location, cv.phone, cv.email] | select | list + cv.links) | join(' | ') }}
+{% for section in cv.sections %}
+
+{{ section.title | upper }}
+{% if section.name == 'summary' %}
+{{ cv.summary }}
+{% elif section.name == 'experience' %}
+{% for job in cv.experience %}
+{{ job.title }} | {{ job.company }}{% if job.location %} | {{ job.location }}{% endif %} | {{ job.period }}
+{% for bullet in job.bullets %}
+- {{ bullet }}
+{% endfor %}
+{% if job.technologies %}
+- {{ cv.technologies_label }}: {{ job.technologies | join(', ') }}.
+{% endif %}
+{% if not loop.last %}
+
+{% endif %}
+{% endfor %}
+{% elif section.name == 'projects' %}
+{% for project in cv.projects %}
+- {{ project.name }}{% if project.url %} ({{ project.url }}){% endif %}. {{ project.description }}{% if project.technologies %} {{ cv.technologies_label }}: {{ project.technologies | join(', ') }}.{% endif %}
+
+{% endfor %}
+{% elif section.name == 'skills' %}
+{% for group in cv.skills %}
+{{ group.category }}: {{ group.items | join(', ') }}
+{% endfor %}
+{% elif section.name == 'education' %}
+{% for item in cv.education %}
+{{ item.degree }} | {{ item.institution }} | {{ item.period }}
+{% endfor %}
+{% elif section.name == 'certifications' %}
+{% for item in cv.certifications %}
+- {{ item }}
+{% endfor %}
+{% elif section.name == 'languages' %}
+{% for item in cv.languages %}
+- {{ item }}
+{% endfor %}
+{% endif %}
+{% endfor %}

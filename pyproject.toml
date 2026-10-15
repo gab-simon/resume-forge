@@ -1,0 +1,73 @@
+[project]
+name = "resume-forge"
+version = "0.1.0"
+description = "CV como código: currículo LaTeX ATS-friendly a partir de YAML"
+readme = "README.md"
+authors = [
+    { name = "Gabriel Simon", email = "gabrielsimonbr@gmail.com" }
+]
+requires-python = ">=3.14"
+dependencies = [
+    "alembic>=1.19.1",
+    "fastapi[standard]>=0.141.1",
+    "httpx>=0.28.1",
+    "jinja2>=3.1.6",
+    "loguru>=0.7.3",
+    "psycopg[binary,pool]>=3.3.4",
+    "pydantic>=2.13.4",
+    "pydantic-settings>=2.15.0",
+    "pyyaml>=6.0.3",
+    "rich>=15.0.0",
+    "sqlmodel>=0.0.39",
+    "typer>=0.27.1",
+]
+
+[dependency-groups]
+dev = [
+    "ipykernel>=7.3.0",
+    "pre-commit>=4.6.2",
+    "pytest>=9.1.1",
+    "pytest-asyncio>=1.4.0",
+    "pytest-cov>=7.1.0",
+    "pytest-env>=1.8.0",
+    "pytest-xdist>=3.8.0",
+    "ruff==0.16.3",
+    "ty==0.0.72",
+    "types-pyyaml>=6.0.12.20260906",
+]
+
+[build-system]
+requires = ["uv_build>=0.12.3,<0.13.0"]
+build-backend = "uv_build"
+
+[tool.uv.build-backend]
+module-name = "app"
+module-root = ""
+
+[tool.pytest.ini_options]
+minversion = "9.1.1"
+addopts = "-ra -q"
+python_files = "test_*.py"
+# testpaths = "tests"
+norecursedirs = ["__pycache__"]
+asyncio_mode = "auto"
+
+[tool.coverage.report]
+exclude_also = [
+    "def __repr__",
+    "if self.debug:",
+    "if settings.DEBUG",
+    "raise AssertionError",
+    "raise NotImplementedError",
+    "if 0:",
+    "if __name__ == .__main__.:",
+    "if TYPE_CHECKING:",
+    "class .*\\bProtocol\\):",
+    "@(abc\\.)?abstractmethod",
+]
+
+[project.scripts]
+server = 'scripts.server:server'
+lint = 'scripts.lint:ruff_lint'
+test = 'scripts.test:unit_test'
+cv = 'app.infra.cli.command:main'

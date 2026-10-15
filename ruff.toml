@@ -1,0 +1,72 @@
+# ruff.toml
+target-version = "py314"
+
+# Same as Black
+indent-width = 4
+line-length = 88
+
+[format]
+indent-style = "space"
+line-ending = "lf"
+quote-style = "single"
+
+[lint]
+preview = true
+
+select = [
+    "A",     # flake8-builtins
+    "ANN",   # flake8-annotations
+    "ARG",   # flake8-unused-arguments
+    "ASYNC", # flake8-async
+    "B",     # flake8-bugbear
+    "C4",    # flake8-comprehensions
+    "C90",   # mccabe complexity
+    "D",     # pydocstyle
+    "DOC",   # pydoclint
+    "DTZ",   # flake8-datetimez
+    "E",     # pycodestyle errors
+    "F",     # Pyflakes
+    "FAST",  # FastAPI
+    "FURB",  # refurb
+    "I",     # isort
+    "INP",   # flake8-no-pep420
+    "ISC",   # flake8-implicit-str-concat
+    "LOG",   # flake8-logging
+    "N",     # pep8-naming
+    "PERF",  # Perflint
+    "PGH",   # pygrep-hooks
+    "PIE",   # flake8-pie
+    "PT",    # flake8-pytest-style
+    "PTH",   # flake8-use-pathlib
+    "RET",   # flake8-return
+    "RSE",   # flake8-raise
+    "RUF",   # Ruff-specific rules
+    "S",     # flake8-bandit
+    "SIM",   # flake8-simplify
+    "SLF",   # flake8-self
+    "T20",   # flake8-print
+    "TRY",   # tryceratops
+    "UP",    # pyupgrade
+    "W",     # pycodestyle warnings
+]
+
+ignore = [
+    # flake8-bandit "Use of 'assert' detected"
+    "assert",
+    # tryceratops "Avoid specifying long messages outside the exception class"
+    "raise-vanilla-args",
+]
+
+# The en dash is the standard separator of date ranges in the resume.
+allowed-confusables = ["–"]
+
+[lint.flake8-bugbear]
+extend-immutable-calls = [
+    "Depends",
+    "fastapi.Depends",
+    "fastapi.params.Depends",
+]
+
+[lint.pydocstyle]
+# Use Numpy-style docstrings.
+convention = "numpy"

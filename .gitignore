@@ -1,0 +1,22 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+.pytest_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+
+# Local environment. Copy .env.example to .env.
+.env
+infra/postgres/.env
+infra/postgres/postgres_data/
+
+# Generated resumes. Build them with `uv run cv build`.
+build/
+
+# Editors and OS
+.vscode/*
+!.vscode/settings.json
+.idea/
+.DS_Store
